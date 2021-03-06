@@ -52,18 +52,23 @@ def run_network(filename, num_epochs, training_set_size=1000, lmbda=0.0):
     random.seed(12345678)
     np.random.seed(12345678)
     training_data, validation_data, test_data = mnist_loader.load_data_wrapper()
+    #print(type(training_data))
+    #print(training_data[0])
     net = network2.Network([784, 30, 10], cost=network2.CrossEntropyCost())
     net.large_weight_initializer()
     test_cost, test_accuracy, training_cost, training_accuracy \
         = net.SGD(training_data[:training_set_size], num_epochs, 10, 0.5,
-                  evaluation_data=test_data, lmbda = lmbda,
-                  monitor_evaluation_cost=True, 
-                  monitor_evaluation_accuracy=True, 
-                  monitor_training_cost=True, 
+                  evaluation_data=test_data,
+                  lmbda = lmbda,
+                  monitor_evaluation_cost=True,
+                  monitor_evaluation_accuracy=True,
+                  monitor_training_cost=True,
                   monitor_training_accuracy=True)
     f = open(filename, "w")
     json.dump([test_cost, test_accuracy, training_cost, training_accuracy], f)
     f.close()
+
+    net.save("modelo")
 
 def make_plots(filename, num_epochs, 
                training_cost_xmin=200, 
@@ -154,22 +159,34 @@ def plot_overlay(test_accuracy, training_accuracy, num_epochs, xmin,
     ax.set_ylim([90, 100])
     plt.legend(loc="lower right")
     plt.show()
+"""
+TESTE MODELO TREINADO
 
 if __name__ == "__main__":
-    filename = raw_input("Enter a file name: ")
-    num_epochs = int(raw_input(
+    net = network2.load("modelo50000")
+    data = mnist_loader.lerImagens(10)
+    r = net.teste_modelo(data)
+
+    for i in r:
+        print(i)
+
+
+"""
+if __name__ == "__main__":
+    filename = input("Enter a file name: ")
+    num_epochs = int(input(
         "Enter the number of epochs to run for: "))
-    training_cost_xmin = int(raw_input(
+    training_cost_xmin = int(input(
         "training_cost_xmin (suggest 200): "))
-    test_accuracy_xmin = int(raw_input(
+    test_accuracy_xmin = int(input(
         "test_accuracy_xmin (suggest 200): "))
-    test_cost_xmin = int(raw_input(
+    test_cost_xmin = int(input(
         "test_cost_xmin (suggest 0): "))
-    training_accuracy_xmin = int(raw_input(
+    training_accuracy_xmin = int(input(
         "training_accuracy_xmin (suggest 0): "))
-    training_set_size = int(raw_input(
+    training_set_size = int(input(
         "Training set size (suggest 1000): "))
-    lmbda = float(raw_input(
+    lmbda = float(input(
         "Enter the regularization parameter, lambda (suggest: 5.0): "))
     main(filename, num_epochs, training_cost_xmin, 
          test_accuracy_xmin, test_cost_xmin, training_accuracy_xmin,
